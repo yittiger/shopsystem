@@ -11,7 +11,7 @@
               <el-input v-model="loginForm.username" placeholder="用户名"></el-input>
             </el-form-item>
             <el-form-item prop="password">
-              <el-input type="password" v-model="loginForm.password"></el-input>
+              <el-input @blur="changeType" @input="changeType" :type="inputType" v-model="loginForm.password" placeholder="密码"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button @click="login" class="loginBtn" type="primary">登录</el-button>
@@ -33,6 +33,7 @@
           username: 'admin',
           password: '123456'
         },
+        inputType: 'text',
         loginFormRules: {
           username: [
             { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -46,6 +47,11 @@
       }
     },
     methods: {
+      changeType() {
+        if (this.loginForm.password.length !==0){
+          this.inputType = 'password'
+        }
+      },
       login() {
         // console.log(this.$refs);
         this.$refs['loginFormRef'].validate((valid) => {
@@ -69,6 +75,11 @@
             return false
           }
         })
+      }
+    },
+    created() {
+      if (this.loginForm.password.length !==0){
+        this.inputType = 'password'
       }
     }
   }
