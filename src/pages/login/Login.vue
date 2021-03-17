@@ -14,7 +14,7 @@
               <el-input type="password" v-model="loginForm.password"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button class="loginBtn" type="primary">登录</el-button>
+              <el-button @click="login" class="loginBtn" type="primary">登录</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -24,13 +24,14 @@
 </template>
 
 <script>
+  import { login } from 'network/user'
   export default {
     name: "Login",
     data() {
       return {
         loginForm: {
-          username: '',
-          password: ''
+          username: 'admin',
+          password: '123456'
         },
         loginFormRules: {
           username: [
@@ -42,6 +43,32 @@
             { min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur' }
           ]
         }
+      }
+    },
+    methods: {
+      login() {
+        // console.log(this.$refs);
+        this.$refs['loginFormRef'].validate((valid) => {
+          if(valid) {
+            // alert('submit')
+            login(this.loginForm).then(res => {
+              // console.log(res);
+              if(res.meta.status === 200){
+                const token = res.data.token
+                window.sessionStorage.setItem('token', token)
+
+                this.$router.push('/home')
+
+                this.$message({
+                  message: '登录成功',
+                  type: 'success'
+                })
+              }
+            })
+          }else {
+            return false
+          }
+        })
       }
     }
   }
